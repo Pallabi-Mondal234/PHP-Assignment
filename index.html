@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <link rel="stylesheet" href="CSS/index.css">
+</head>
+<body>
+   <form action="form.php" method="POST" enctype="multipart/form-data">
+        <label for="fname">First Name</label>
+        <input type="text" name="fname" id="first-name" placeholder="First Name" oninput="updateFullname()">
+        <span id="first-name-error" style="color: red;"></span>
+        <label for="lname">Last Name</label>
+        <input type="text" name="lname" id="last-name" placeholder="Last Name" oninput="updateFullname()">
+        <span id="last-name-error" style="color: red;"></span>
+        <label for="fullName">Full Name</label>
+        <input type="text" name="fullName" id="full-name" placeholder="Full Name" readonly>
+        <input type="file" name="UploadImg" id="UploadImg">
+        <button onclick="isValidName(event)">Submit</button>
+   </form> 
+</body>
+</html>
+<script src="JS/index.js"></script>
+
