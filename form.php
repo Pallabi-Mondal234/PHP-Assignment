@@ -51,6 +51,18 @@ if ($uploadOk == 0) {
   }
 }
 
+// Store submitted data in a session
+$marksInput = htmlspecialchars($_POST["addMarks"]);
+$marksArray = [];
+$marksPairs = explode(",", $marksInput); // Split by commas
+
+    foreach ($marksPairs as $pair) {
+        $subjectMarks = explode("|", trim($pair)); // Split by hyphen (Subject-Marks)
+        if (count($subjectMarks) == 2) {
+            $marksArray[trim($subjectMarks[0])] = trim($subjectMarks[1]);
+        }
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,6 +75,23 @@ if ($uploadOk == 0) {
     <h2>Hello
         <?php echo $fullName ?>
     </h2>
+    <h3>Submitted Marks</h3>
+    <?php
+    echo "<table border='1'>";
+
+    // Print Subject Headers
+    foreach ($marksArray as $subject => $marks) {
+        echo "<th>$subject</th>";
+    }
+
+    echo "</tr>";
+    
+    foreach ($marksArray as $marks) {
+        echo "<td>$marks</td>";
+    }
+
+    echo "</tr></table>";
+    ?>
 </body>
 </html>
 

@@ -44,4 +44,27 @@ button{
     padding-top: 30px;
 }
 
+/* table design */
+
+h3,
+h2 {
+    font-size: 20px;
+    padding: 20px 0;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+table th {
+    padding: 20px;
+    background-color: green;
+    color: white;
+}
+
+table td {
+    padding: 20px;
+}
 
