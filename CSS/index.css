@@ -34,3 +34,14 @@ button{
     color: white;
     font-size: 25px;
 }
+
+/* form.php page design */
+/* upload img design */
+.uploadedImg {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+
