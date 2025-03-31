@@ -14,12 +14,20 @@ form{
     left: 50%;
     transform: translate(-50%,-50%);
     font-size: 25px;
+    background-color: rgb(238, 242, 245);
+    padding: 30px;
+    border: 1px solid black;
 }
 form input,button{
-    padding: 20px 30px;
+    padding: 20px 7px;
+    border: 1px solid black;
+    background-color: white
 }
 form input::placeholder{
     font-size: 20px;
+}
+span {
+    color: red;
 }
 button{
     background-color: rgb(6, 139, 39);
