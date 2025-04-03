@@ -1,4 +1,9 @@
 <?php
+require __DIR__ . '/../../vendor/autoload.php';
+
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+
 //clean user input to prevent security.
 function sanitizeInput($input)
 {
@@ -63,16 +68,62 @@ function validateEmailWithAPI($email)
 
     return isset($data['smtp_check']) && $data['smtp_check'] === true;
 }
+//generate and store in doc format.
+function generateAndStoreDoc($fullName, $phone, $email, $marksArray, $imagePath = '', $uploadPath = "submissions/") {
+    if (!is_dir($uploadPath)) {
+        mkdir($uploadPath, 0777, true);
+    }
+    
+    $fileName = $uploadPath . time() . "_User_Details.docx";
+    $phpWord = new PhpWord();
+    $section = $phpWord->addSection();
+
+    $section->addText("User Submission Details", ['bold' => true, 'size' => 16, 'underline' => 'single']);
+    $section->addTextBreak(1);
+    $section->addText("Full Name: " . $fullName, ['size' => 12]);
+    $section->addText("Phone: " . $phone, ['size' => 12]);
+    $section->addText("Email: " . $email, ['size' => 12]);
+    $section->addTextBreak(1);
+
+    if (!empty($marksArray)) {
+        $section->addText("Marks Details:", ['bold' => true, 'size' => 14]);
+        $table = $section->addTable();
+        $table->addRow();
+        $table->addCell(4000, ['bgColor' => 'cccccc'])->addText("Subject", ['bold' => true]);
+        $table->addCell(2000, ['bgColor' => 'cccccc'])->addText("Marks", ['bold' => true]);
+        foreach ($marksArray as $subject => $score) {
+            $table->addRow();
+            $table->addCell(4000)->addText($subject);
+            $table->addCell(2000)->addText($score);
+        }
+        $section->addTextBreak(1);
+    }
+    
+
+    if (!empty($imagePath) && file_exists($imagePath)) {
+        $section->addText("Uploaded Image:");
+        $section->addImage($imagePath, ['width' => 150, 'height' => 150, 'alignment' => 'center']);
+        $section->addTextBreak(1);
+    }
+
+    $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+    $objWriter->save($fileName);
+    
+    return $fileName; // Return file path
+}
 //handle form submission.
 function handleFormSubmission()
 {
-    global $fullName, $marksArray, $phone, $email;
+    global $fullName, $marksArray, $phone, $email,$filePath;
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fullName = sanitizeInput($_POST["fullName"] ?? "");
         $phone = sanitizeInput($_POST["phone"] ?? "");
         $marksArray = parseMarks($_POST["addMarks"] ?? "");
         $email = sanitizeInput($_POST["email"] ?? "");
         $imagePath = handleImageUpload($_FILES["chooseImg"] ?? []);
+
+        $filePath = generateAndStoreDoc($fullName, $phone, $email, $marksArray, $imagePath);
+        
     }
 }
 //function call.
@@ -95,22 +146,18 @@ handleFormSubmission();
         </h2>
 
         <h3>Submitted Marks</h3>
-        <?php
-        echo "<table border='1'>";
-
-        // Print Subject Headers.
-        foreach ($marksArray as $subject => $marks) {
-            echo "<th>$subject</th>";
-        }
-
-        echo "</tr>";
-
-        foreach ($marksArray as $marks) {
-            echo "<td>$marks</td>";
-        }
-
-        echo "</tr></table>";
-        ?>
+        <table border="1">
+        <tr>
+            <th>Subject</th>
+            <th>Marks</th>
+        </tr>
+        <?php foreach ($marksArray as $subject => $marks): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($subject); ?></td>
+                <td><?php echo htmlspecialchars($marks); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
         <p>Phone Number : <?php echo $phone ?></p>
         <p><?php 
             if (validateEmailWithAPI($email)) {
@@ -119,6 +166,7 @@ handleFormSubmission();
                 echo " Invalid email address. Please enter a valid email.";
             }
         ?></p>
+        <p>Document saved successfully: <a href='$filePath' download>Download Here</a></p>
     </div>
 </body>
 

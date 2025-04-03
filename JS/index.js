@@ -77,6 +77,7 @@ function validateEmail(event) {
         emailError.textContent = "";
     }
 }
+
 //form validate function.
 function formValidate() {
     updateFullname();
