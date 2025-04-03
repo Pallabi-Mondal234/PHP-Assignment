@@ -92,8 +92,14 @@ table td {
     padding: 20px;
 }
 
-p{
+/* phone number and email design */
+p {
     font-size: 20px;
     text-align: center;
     padding-top: 20px;
 }
+
+#sucess-message {
+    color: green;
+}
+
