@@ -1,31 +1,31 @@
+let firstNameError = document.getElementById("first-name-error");
+let lastNameError = document.getElementById("last-name-error");
 
-let error = document.getElementById("first-name-error");
-let lerror = document.getElementById("last-name-error");
-
+//update full name
 function updateFullname() {
-    let fname = document.getElementById("first-name").value;
-    let lname = document.getElementById("last-name").value;
-    document.getElementById("full-name").value =
-        fname + " " + lname;
+    let firstName = document.getElementById("first-name").value;
+    let lastName = document.getElementById("last-name").value;
+    document.getElementById("full-name").value = firstName + " " + lastName;
 }
-
+//check name validation
 function isValidName(event) {
-    let fname = document.getElementById("first-name").value;
-    let lname = document.getElementById("last-name").value;
+    let firstName = document.getElementById("first-name").value;
+    let lastName = document.getElementById("last-name").value;
     let check = /^[A-Za-z]+$/;
 
-    if (!check.test(fname) && !check.test(lname)) {
-        error.textContent = "Only alphabets contain";
-        lerror.textContent = "Only alphabets contain";
-        event.preventDefault(); // Stop form submission if validation fails
-    }
-    else if(!check.test(fname)){
-        error.textContent = "Only alphabets contain";
+    if (!check.test(firstName) && !check.test(lastName)) {
+        firstNameError.textContent = "Only alphabets contain";
+        lastNameError.textContent = "Only alphabets contain";
         event.preventDefault();
     }
-    else if(!check.test(lname)){
-        lerror.textContent = "Only alphabets contain";
+    else if (!check.test(firstName)) {
+        firstNameError.textContent = "Only alphabets contain";
         event.preventDefault();
     }
-
+    else if (!check.test(lastName)) {
+        lastNameError.textContent = "Only alphabets contain";
+        event.preventDefault();
+    }
 }
+
+
