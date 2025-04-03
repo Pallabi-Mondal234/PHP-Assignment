@@ -1,43 +1,59 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-form{
+
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     min-width: 500px;
-    gap: 10px;
+    gap: 11px;
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     font-size: 25px;
     background-color: rgb(238, 242, 245);
     padding: 30px;
     border: 1px solid black;
 }
-form input,
-#country-code,button{
-    padding: 20px 7px;
-    border: 1px solid black;
-    background-color: white
-}
-form input::placeholder{
+
+label {
     font-size: 20px;
 }
+
+form input,
+#chooseImg,
+#country-code,
+button {
+    padding: 12px 7px;
+    border: 1px solid black;
+    background-color: white;
+    font-size: 12px;
+}
+
+form input::placeholder {
+    font-size: 20px;
+}
+
 textarea {
     padding: 50px 10px;
     border: 1px solid black;
 }
-label{
-    font-size: 20px;
-}
+
 span {
     color: red;
+    font-size: 15px;
 }
-button{
+
+button {
     background-color: rgb(6, 139, 39);
     color: white;
     font-size: 25px;

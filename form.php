@@ -1,106 +1,96 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $fullName = isset($_POST["fullName"]) ? trim($_POST["fullName"]) : "";
-  $fullName = htmlspecialchars($fullName);
+//clean user input to prevent security
+function sanitizeInput($input)
+{
+    return htmlspecialchars(trim($input));
+}
+//move image to upload directory
+function handleImageUpload($file, $uploadDir = "upload/")
+{
+    if (!isset($file) || $file["error"] !== 0) {
+        echo "No file uploaded or file upload error!";
+        return "";
+    }
+
+    // Ensure the upload directory exists
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    $targetFile = $uploadDir . basename($file["name"]);
+
+    // Move file from temp directory to upload folder
+    if (move_uploaded_file($file["tmp_name"], $targetFile)) {
+        echo "<img src='$targetFile' alt='Uploaded Image'>";
+        return $targetFile;
+    } else {
+        echo "Error moving uploaded file! Check folder permissions.<br>";
+        return "";
+    }
+}
+//create array for marks 
+function parseMarks($marksInput)
+{
+    $marksArray = [];
+    $marksPairs = explode(",", sanitizeInput($marksInput));
+
+    foreach ($marksPairs as $pair) {
+        $subjectMarks = explode("|", trim($pair));
+        if (count($subjectMarks) == 2) {
+            $marksArray[trim($subjectMarks[0])] = trim($subjectMarks[1]);
+        }
+    }
+    return $marksArray;
 }
 
-//show image
-$target_dir = "upload/";
-$target_file = $target_dir . basename($_FILES["chooseImg"]["name"]);
-$uploadOk = 1;
-$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-// Check if image file is a actual image or fake image
-if (isset($_POST["submit"])) {
-  $check = getimagesize($_FILES["chooseImg"]["tmp_name"]);
-  if ($check !== false) {
-    echo "File is an image - " . $check["mime"] . ".";
-    $uploadOk = 1;
-  } else {
-    echo "File is not an image.";
-    $uploadOk = 0;
-  }
+//handle form submission
+function handleFormSubmission() {
+    global $fullName, $marksArray,$email,$phone;
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $fullName = sanitizeInput($_POST["fullName"] ?? "");
+        $phone = sanitizeInput($_POST["phone"] ?? "");
+        $marksArray = parseMarks($_POST["addMarks"] ?? "");
+        $imagePath = handleImageUpload($_FILES["chooseImg"] ?? []);
+        echo "Phone Number : ".$phone;
+    }
 }
-
-// Check if file already exists
-if (file_exists($target_file)) {
-  echo "Sorry, file already exists.";
-  $uploadOk = 0;
-}
-
-// Check file size
-if ($_FILES["chooseImg"]["size"] > 500000) {
-  echo "Sorry, your file is too large.";
-  $uploadOk = 0;
-}
-
-// Allow certain file formats
-if (
-  $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-  && $imageFileType != "gif"
-) {
-  echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-  $uploadOk = 0;
-}
-
-if ($uploadOk == 0) {
-  echo "Sorry, your file was not uploaded.";
-} else {
-  if (move_uploaded_file($_FILES["chooseImg"]["tmp_name"], $target_file)) {
-    echo "<img class=uploadedImg src='$target_file' alt='uploaded-img'>";
-  } else {
-    echo "Sorry, there was an error uploading your file.";
-  }
-}
-
-// Store submitted data in a session
-$marksInput = htmlspecialchars($_POST["addMarks"]);
-$marksArray = [];
-$marksPairs = explode(",", $marksInput); // Split by commas
-
-foreach ($marksPairs as $pair) {
-  $subjectMarks = explode("|", trim($pair)); // Split by hyphen (Subject-Marks)
-  if (count($subjectMarks) == 2) {
-    $marksArray[trim($subjectMarks[0])] = trim($subjectMarks[1]);
-  }
-}
-
-// Display phone number
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $phone = $_POST["phone"];
-  echo "Phone Number : +91" . $phone;
-}
+//function call
+handleFormSubmission();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Output</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Output</title>
+    <link rel="stylesheet" href="CSS/index.css">
 </head>
 
 <body>
-  <h2>Hello
-    <?php echo $fullName ?>
-  </h2>
-  <h3>Submitted Marks</h3>
-  <?php
-  echo "<table border='1'>";
+    <div class="container">
+        <h2>Hello
+            <?php echo $fullName ?>
+        </h2>
 
-  // Print Subject Headers
-  foreach ($marksArray as $subject => $marks) {
-    echo "<th>$subject</th>";
-  }
+        <h3>Submitted Marks</h3>
+        <?php
+        echo "<table border='1'>";
 
-  echo "</tr>";
+        // Print Subject Headers
+        foreach ($marksArray as $subject => $marks) {
+            echo "<th>$subject</th>";
+        }
 
-  foreach ($marksArray as $marks) {
-    echo "<td>$marks</td>";
-  }
+        echo "</tr>";
 
-  echo "</tr></table>";
-  ?>
+        foreach ($marksArray as $marks) {
+            echo "<td>$marks</td>";
+        }
+
+        echo "</tr></table>";
+        ?>
+    </div>
 </body>
 
 </html>
