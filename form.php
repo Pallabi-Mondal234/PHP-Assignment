@@ -21,7 +21,7 @@ function handleImageUpload($file, $uploadDir = "upload/")
 
     // Move file from temp directory to upload folder
     if (move_uploaded_file($file["tmp_name"], $targetFile)) {
-        echo "<img src='$targetFile' alt='Uploaded Image'>";
+        echo "<img class=uploadedImg src='$targetFile' alt='Uploaded Image'>";
         return $targetFile;
     } else {
         echo "Error moving uploaded file! Check folder permissions.<br>";
@@ -45,13 +45,12 @@ function parseMarks($marksInput)
 
 //handle form submission
 function handleFormSubmission() {
-    global $fullName, $marksArray,$email,$phone;
+    global $fullName, $marksArray,$phone;
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fullName = sanitizeInput($_POST["fullName"] ?? "");
         $phone = sanitizeInput($_POST["phone"] ?? "");
         $marksArray = parseMarks($_POST["addMarks"] ?? "");
         $imagePath = handleImageUpload($_FILES["chooseImg"] ?? []);
-        echo "Phone Number : ".$phone;
     }
 }
 //function call
@@ -90,6 +89,7 @@ handleFormSubmission();
 
         echo "</tr></table>";
         ?>
+        <p>Phone Number : <?php echo $phone?></p>
     </div>
 </body>
 
