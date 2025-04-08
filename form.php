@@ -1,45 +1,49 @@
 <?php
-//clean user input to prevent security
-function sanitizeInput($input)
+
+class FormHandler
 {
-    return htmlspecialchars(trim($input));
-}
-//move image to upload directory
-function handleImageUpload($file, $uploadDir = "upload/")
-{
-    if (!isset($file) || $file["error"] !== 0) {
-        echo "No file uploaded or file upload error!";
-        return "";
+    private $uploadDir = "upload/";
+
+    public $fullName;
+
+    public function sanitizeInput($input)
+    {
+        return htmlspecialchars(trim($input));
     }
 
-    // Ensure the upload directory exists
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
+    public function handleImageUpload($file)
+    {
+        if (!isset($file) || $file["error"] !== 0) {
+            echo "No file uploaded or file upload error!";
+            return "";
+        }
+
+        if (!is_dir($this->uploadDir)) {
+            mkdir($this->uploadDir, 0777, true);
+        }
+
+        $targetFile = $this->uploadDir . basename($file["name"]);
+
+        if (move_uploaded_file($file["tmp_name"], $targetFile)) {
+            echo "<img class=uploadedImg src='$targetFile' alt='Uploaded Image'>";
+            return $targetFile;
+        } else {
+            echo "Error moving uploaded file! Check folder permissions.<br>";
+            return "";
+        }
     }
 
-    $targetFile = $uploadDir . basename($file["name"]);
+    public function handleFormSubmission()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $this->fullName = $this->sanitizeInput($_POST["fullName"] ?? "");
+            $imagePath = $this->handleImageUpload($_FILES["chooseImg"] ?? []);
+        }
+    }
+}
 
-    // Move file from temp directory to upload folder
-    if (move_uploaded_file($file["tmp_name"], $targetFile)) {
-        echo "File uploaded successfully! <br>";
-        echo "<img src='$targetFile' alt='Uploaded Image'>";
-        return $targetFile;
-    } else {
-        echo "Error moving uploaded file! Check folder permissions.<br>";
-        return "";
-    }
-}
-//handle form submission
-function handleFormSubmission()
-{
-    global $fullName;
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $fullName = sanitizeInput($_POST["fullName"] ?? "");
-        $imagePath = handleImageUpload($_FILES["chooseImg"] ?? []);
-    }
-}
-//function call
-handleFormSubmission();
+$formHandler = new FormHandler();
+$formHandler->handleFormSubmission();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,12 +52,14 @@ handleFormSubmission();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Output</title>
+    <link rel="stylesheet" href="CSS/index.css">
 </head>
 
 <body>
-    <h2>Hello
-        <?php echo $fullName ?>
-    </h2>
+    <div class="container">
+        <h2>Hello <?php echo $formHandler->fullName; ?></h2>
+    </div>
 </body>
 
 </html>
+
