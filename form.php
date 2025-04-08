@@ -1,18 +1,24 @@
 <?php
-//clean user input to prevent security
-function sanitizeInput($input)
+
+class FormHandler
 {
-    return htmlspecialchars(trim($input));
-}
-//handle the submission of form
-function handleFormSubmission()
-{
-    global $fullName;
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $fullName = sanitizeInput($_POST["fullName"] ?? "");
+    public $fullName;
+
+    public function sanitizeInput($input)
+    {
+        return htmlspecialchars(trim($input));
+    }
+
+    public function handleFormSubmission()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $this->fullName = $this->sanitizeInput($_POST["fullName"] ?? "");
+        }
     }
 }
-handleFormSubmission();
+
+$formHandler = new FormHandler();
+$formHandler->handleFormSubmission();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,12 +27,14 @@ handleFormSubmission();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Output</title>
+    <link rel="stylesheet" href="CSS/index.css">
 </head>
 
 <body>
-    <h2>Hello
-        <?php echo $fullName ?>
-    </h2>
+    <div class="container">
+        <h2>Hello <?php echo $formHandler->fullName; ?></h2>
+    </div>
 </body>
 
 </html>
+
