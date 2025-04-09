@@ -4,12 +4,12 @@ include '../Login/logout.php';
 class FormHandler
 {
     public $fullName;
-
+    //clear spaces.
     public function sanitizeInput($input)
     {
         return htmlspecialchars(trim($input));
     }
-
+    //handle submission form.
     public function handleFormSubmission()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -17,7 +17,7 @@ class FormHandler
         }
     }
 }
-
+//object creation.
 $formHandler = new FormHandler();
 $formHandler->handleFormSubmission();
 ?>
