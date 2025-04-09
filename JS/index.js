@@ -170,7 +170,7 @@ async function validateEmail() {
         const formData = new FormData();
         formData.append("email", email);
 
-        const response = await fetch("validate-email.php", {
+        const response = await fetch("form.php", {
             method: "POST",
             body: formData
         });
