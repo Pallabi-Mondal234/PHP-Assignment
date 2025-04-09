@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+include '../Login/logout.php';
+
 require __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpWord\PhpWord;
@@ -150,6 +150,7 @@ $formHandler->handleFormSubmission();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Output</title>
     <link rel="stylesheet" href="CSS/index.css">
+    <link rel="stylesheet" href="/PHP-Assignment-New/Login/CSS/style.css">
 </head>
 
 <body>
