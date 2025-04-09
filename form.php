@@ -1,4 +1,5 @@
 <?php
+include '../Login/logout.php';
 
 class FormHandler
 {
@@ -72,6 +73,7 @@ $formHandler->handleFormSubmission();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Output</title>
     <link rel="stylesheet" href="CSS/index.css">
+    <link rel="stylesheet" href="/PHP-Assignment-New/Login/CSS/style.css">
 </head>
 
 <body>
