@@ -1,11 +1,62 @@
 <?php
+// Logout handler.
 include '../Login/logout.php';
 
+// Autoload dependencies.
 require __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 
+// Email validation helper class.
+class EmailValidator
+{
+    // private $apiKey = "3803df1be2a145bd9ddde411d50c0144";
+    private $apiKey = "c1d992ef5c074671bfacc25d4bed28ff";
+    
+    // validate email.
+    public function validate($email)
+    {
+        $url = "http://apilayer.net/api/check?access_key=" . urlencode($this->apiKey) . "&email=" . urlencode($email);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        if (!$response) {
+            return false;
+        }
+
+        $data = json_decode($response, true);
+
+        // Debug only
+        echo "<pre>";
+        print_r($data);
+        echo "</pre>";
+        exit;
+
+        return (
+            isset($data['format_valid']) && $data['format_valid'] === true &&
+            isset($data['mx_found']) && $data['mx_found'] === true
+        );
+    }
+}
+
+// Handle AJAX email validation.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']) && !isset($_POST['fullName'])) {
+    header('Content-Type: application/json');
+    $email = htmlspecialchars(trim($_POST['email']));
+    $validator = new EmailValidator();
+    $isValid = $validator->validate($email);
+    echo json_encode(['valid' => $isValid]);
+    exit;
+}
+
+// Form handler class.
 class FormHandler
 {
     private $uploadDir = "upload/";
@@ -16,12 +67,12 @@ class FormHandler
     public $email;
     public $marksArray = [];
     public $filePath;
-
+    //clear unnecessary space.
     public function sanitizeInput($input)
     {
         return htmlspecialchars(trim($input));
     }
-
+    //move image to upload directory.
     public function handleImageUpload($file)
     {
         if (!isset($file) || $file["error"] !== 0) {
@@ -36,14 +87,14 @@ class FormHandler
         $targetFile = $this->uploadDir . basename($file["name"]);
 
         if (move_uploaded_file($file["tmp_name"], $targetFile)) {
-            echo "<img class=uploadedImg src='$targetFile' alt='Uploaded Image'>";
+            echo "<img class='uploadedImg' src='$targetFile' alt='Uploaded Image'>";
             return $targetFile;
         } else {
             echo "Error moving uploaded file! Check folder permissions.<br>";
             return "";
         }
     }
-
+    //make a marks array to store marks.
     public function parseMarks($marksInput)
     {
         $marksArray = [];
@@ -60,28 +111,7 @@ class FormHandler
 
         return $marksArray;
     }
-
-    public function validateEmailWithAPI($email)
-    {
-        $apiKey = "3803df1be2a145bd9ddde411d50c0144";
-        $url = "http://apilayer.net/api/check?access_key=" . urlencode($apiKey) . "&email=" . urlencode($email);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-
-        $response = curl_exec($ch);
-        if ($response === false) {
-            return false;
-        }
-
-        curl_close($ch);
-        $data = json_decode($response, true);
-
-        return isset($data['smtp_check']) && $data['smtp_check'] === true;
-    }
-
+    //generate and store the result after submission.
     public function generateAndStoreDoc($imagePath = '')
     {
         if (!is_dir($this->submissionDir)) {
@@ -105,6 +135,7 @@ class FormHandler
             $table->addRow();
             $table->addCell(4000, ['bgColor' => 'cccccc'])->addText("Subject", ['bold' => true]);
             $table->addCell(2000, ['bgColor' => 'cccccc'])->addText("Marks", ['bold' => true]);
+
             foreach ($this->marksArray as $subject => $score) {
                 $table->addRow();
                 $table->addCell(4000)->addText($subject);
@@ -124,14 +155,14 @@ class FormHandler
 
         return $fileName;
     }
-
+    //handle form submission.
     public function handleFormSubmission()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->fullName = $this->sanitizeInput($_POST["fullName"] ?? "");
             $this->phone = $this->sanitizeInput($_POST["phone"] ?? "");
-            $this->marksArray = $this->parseMarks($_POST["addMarks"] ?? "");
             $this->email = $this->sanitizeInput($_POST["email"] ?? "");
+            $this->marksArray = $this->parseMarks($_POST["addMarks"] ?? "");
             $imagePath = $this->handleImageUpload($_FILES["chooseImg"] ?? []);
 
             $this->filePath = $this->generateAndStoreDoc($imagePath);
@@ -139,18 +170,21 @@ class FormHandler
     }
 }
 
+// object creation.
 $formHandler = new FormHandler();
 $formHandler->handleFormSubmission();
+$validator = new EmailValidator();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Output</title>
-    <link rel="stylesheet" href="CSS/index.css">
-    <link rel="stylesheet" href="/PHP-Assignment-New/Login/CSS/style.css">
+    <link rel="stylesheet" href="CSS/index.css" />
+    <link rel="stylesheet" href="/PHP-Assignment-New/Login/CSS/style.css" />
 </head>
 
 <body>
@@ -170,19 +204,21 @@ $formHandler->handleFormSubmission();
                 </tr>
             <?php endforeach; ?>
         </table>
-        <p>Phone Number : +91<?php echo $formHandler->phone; ?></p>
+
+        <p>Phone Number: +91<?php echo $formHandler->phone; ?></p>
+
         <p>
             <?php
-            if ($formHandler->validateEmailWithAPI($formHandler->email)) {
-                echo " Email is valid: {$formHandler->email}<br>";
+            if ($validator->validate($formHandler->email)) {
+                echo "Email is valid: {$formHandler->email}<br>";
             } else {
-                echo " Invalid email address. Please enter a valid email.";
+                echo "Invalid email address. Please enter a valid email.";
             }
             ?>
         </p>
+
         <p>Document saved successfully: <a href='<?php echo $formHandler->filePath; ?>' download>Download Here</a></p>
     </div>
 </body>
 
 </html>
-
