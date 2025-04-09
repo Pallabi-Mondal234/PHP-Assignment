@@ -1,0 +1,84 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+/* Login Form */
+.login-container {
+   transform: translateY(65%);
+}
+#loginForm{
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+input {
+    width: 94%;
+    padding: 10px 13px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #218838;
+}
+
+/* Error Message */
+#error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.logout-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    width: 94%;
+    margin: 15px 0px;
+    text-align: center;
+}
+
+.logout-btn:hover {
+    background: #c82333;
+}
+.form-logout-btn{
+    padding: 16px 35px;
+    background-color: #1b0503;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    top: 2%;
+    position: absolute;
+    right: 2%;
+}
+
