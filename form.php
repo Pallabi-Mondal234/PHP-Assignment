@@ -1,18 +1,18 @@
 <?php
 include '../Login/logout.php';
-
+//create formhandler class.
 class FormHandler
 {
     private $uploadDir = "upload/";
 
     public $fullName;
     public $marksArray = [];
-
+    //clear unwanted spaces.
     public function sanitizeInput($input)
     {
         return htmlspecialchars(trim($input));
     }
-
+    //move image to upload directory.
     public function handleImageUpload($file)
     {
         if (!isset($file) || $file["error"] !== 0) {
@@ -34,7 +34,7 @@ class FormHandler
             return "";
         }
     }
-
+    //store marks in marks array.
     public function parseMarks($marksInput)
     {
         $marksArray = [];
@@ -51,7 +51,7 @@ class FormHandler
 
         return $marksArray;
     }
-
+    //handle form submission.
     public function handleFormSubmission()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -61,7 +61,7 @@ class FormHandler
         }
     }
 }
-
+//object creation.
 $formHandler = new FormHandler();
 $formHandler->handleFormSubmission();
 ?>
