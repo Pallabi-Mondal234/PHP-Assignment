@@ -1,17 +1,17 @@
 <?php
 include '../Login/logout.php';
-
+//create form handler class
 class FormHandler
 {
     private $uploadDir = "upload/";
 
     public $fullName;
-
+    //clear spaces.
     public function sanitizeInput($input)
     {
         return htmlspecialchars(trim($input));
     }
-
+    //move image to upload directory.
     public function handleImageUpload($file)
     {
         if (!isset($file) || $file["error"] !== 0) {
@@ -33,7 +33,7 @@ class FormHandler
             return "";
         }
     }
-
+    //handle form submission.
     public function handleFormSubmission()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -42,7 +42,7 @@ class FormHandler
         }
     }
 }
-
+//object creation.
 $formHandler = new FormHandler();
 $formHandler->handleFormSubmission();
 ?>
