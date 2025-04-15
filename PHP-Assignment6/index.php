@@ -1,11 +1,6 @@
 <?php
 include '../Login/navbar.php';
-session_start();
-
-if (!isset($_SESSION["username"])) {
-  header("Location: ../Login");
-  exit();
-}
+include '../session_start.php';
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +58,7 @@ if (!isset($_SESSION["username"])) {
       <button id="submit-btn">Submit</button>
     </form>
   </div>
-  <script src="/../js/index.js"></script>
+  <script src="../js/function.js"></script>
 </body>
 
 </html>

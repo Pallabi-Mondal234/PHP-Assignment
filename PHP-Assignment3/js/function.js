@@ -40,11 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   limitNameInput(firstName);
   limitNameInput(lastName);
-
-  phoneInput.addEventListener("input", function () {
-    let digitsOnly = this.value.replace(/\D/g, '');
-    this.value = digitsOnly.slice(0, 10);
-  });
 });
 
 /**
@@ -150,87 +145,6 @@ function validateMarks() {
 }
 
 /**
- * Validate Indian phone number only.
- * 
- * @returns boolean 
- *   Return boolean value.
- */
-function validatePhoneNumber() {
-  let phone = document.getElementById('phone').value.trim();
-  let countryCode = document.getElementById('country-code').value;
-  let countryError = document.getElementById('country-error');
-  let phoneError = document.getElementById('phone-error');
-  let phonePattern = /^[6-9]\d{9}$/;
-
-  let isValid = true;
-  countryError.textContent = "";
-  phoneError.textContent = "";
-
-  if (countryCode !== "+91") {
-    countryError.textContent = "Only Indian phone numbers are allowed.";
-    isValid = false;
-  }
-
-  if (phone === "") {
-    phoneError.textContent = "Phone number is required.";
-    isValid = false;
-  }
-  else if (!phonePattern.test(phone)) {
-    phoneError.textContent = "Enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.";
-    isValid = false;
-  }
-
-  return isValid;
-}
-
-/**
- * Validate email format and check existence.
- * 
- * @returns boolean 
- *   Return boolean value.
- */
-async function validateEmail() {
-  const email = document.getElementById("email").value.trim();
-  const emailError = document.getElementById("mail-error");
-  const successMessage = document.getElementById("success-message");
-  emailError.textContent = "";
-  successMessage.textContent = "";
-
-  if (!email) {
-    emailError.textContent = "Email is required.";
-    return false;
-  }
-
-  try {
-    const response = await fetch("email.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email: email })
-    });
-
-    const data = await response.json();
-    console.log("Response from PHP:", data);
-
-    if (data.valid) {
-      successMessage.textContent = "Email is valid and exists.";
-      return true;
-    }
-    else {
-      emailError.textContent = "Invalid or non-existent email.";
-      return false;
-    }
-
-  }
-  catch (error) {
-    emailError.textContent = "Server error. Please try again.";
-    console.error("AJAX error:", error);
-    return false;
-  }
-}
-
-/**
  * Check form validation.
  * 
  * @param {*} event 
@@ -243,10 +157,8 @@ async function formValidate(event) {
   let nameValid = isValidName(event);
   let imageValid = validateImageUpload();
   let marksValid = validateMarks();
-  let phoneValid = validatePhoneNumber();
-  let emailValid = await validateEmail();
 
-  if (nameValid && imageValid && phoneValid && emailValid && marksValid) {
+  if (nameValid && imageValid && marksValid) {
     document.getElementById("form-data").submit();
   }
   else {

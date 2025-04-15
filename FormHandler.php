@@ -66,7 +66,7 @@ class FormHandler {
   public $filePath;
 
   /**
-   * take input from the user and clean the unnecessary things.
+   * Take input from the user and clean the unnecessary things.
    *
    * @param string|int $input
    *   Take input from the user.
@@ -79,7 +79,7 @@ class FormHandler {
   }
 
   /**
-   * move the image to the upload directory.
+   * Move the image to the upload directory.
    * 
    * @param array $file 
    *   The uploaded file of image.
@@ -110,7 +110,7 @@ class FormHandler {
   }
 
   /**
-   * make a marks array to store marks.
+   * Make a marks array to store marks.
    * 
    * @param string $marks_input 
    *   Take input in Format: subject|marks (e.g., "Maths|78").
@@ -120,7 +120,7 @@ class FormHandler {
    */
   public function parseMarks(string $marks_input) {
 
-    $marksArray = [];
+    $marks_array = [];
     $marks_lines = preg_split("/\r\n|\n|\r/", trim($marks_input));
 
     foreach ($marks_lines as $line) {
@@ -128,10 +128,10 @@ class FormHandler {
       if (count($subject_marks) === 2) {
         $subject = htmlspecialchars(trim($subject_marks[0]));
         $marks = htmlspecialchars(trim($subject_marks[1]));
-        $marksArray[$subject] = $marks;
+        $marks_array[$subject] = $marks;
       }
     }
-    return $marksArray;
+    return $marks_array;
   }
 
   /**
@@ -197,7 +197,7 @@ class FormHandler {
     $section->addTextBreak(1);
 
     // Add marks in pdf.
-    if (!empty($this->marks_array)) {
+    if (!empty($this->marksArray)) {
       $section->addText("Marks Details:", ['bold' => TRUE, 'size' => 14]);
       $table = $section->addTable();
       $table->addRow();
@@ -226,7 +226,7 @@ class FormHandler {
   }
 
   /**
-   * handle form submission.
+   * Handle form submission.
    */
   public function handleFormSubmission() {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {

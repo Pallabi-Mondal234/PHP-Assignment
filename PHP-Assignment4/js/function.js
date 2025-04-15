@@ -40,11 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   limitNameInput(firstName);
   limitNameInput(lastName);
-
-  phoneInput.addEventListener("input", function () {
-    let digitsOnly = this.value.replace(/\D/g, '');
-    this.value = digitsOnly.slice(0, 10);
-  });
 });
 
 /**
@@ -89,7 +84,7 @@ function isValidName(event) {
 }
 
 /**
- * Validate image.
+ * validate image.
  * 
  * @returns boolean 
  *   Return boolean value.
@@ -108,7 +103,7 @@ function validateImageUpload() {
 }
 
 /**
- * Validate marks.
+ * validate marks.
  * 
  * @returns boolean 
  *   Return boolean value.
@@ -184,54 +179,7 @@ function validatePhoneNumber() {
 }
 
 /**
- * Validate email format and check existence.
- * 
- * @returns boolean 
- *   Return boolean value.
- */
-async function validateEmail() {
-  const email = document.getElementById("email").value.trim();
-  const emailError = document.getElementById("mail-error");
-  const successMessage = document.getElementById("success-message");
-  emailError.textContent = "";
-  successMessage.textContent = "";
-
-  if (!email) {
-    emailError.textContent = "Email is required.";
-    return false;
-  }
-
-  try {
-    const response = await fetch("email.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email: email })
-    });
-
-    const data = await response.json();
-    console.log("Response from PHP:", data);
-
-    if (data.valid) {
-      successMessage.textContent = "Email is valid and exists.";
-      return true;
-    }
-    else {
-      emailError.textContent = "Invalid or non-existent email.";
-      return false;
-    }
-
-  }
-  catch (error) {
-    emailError.textContent = "Server error. Please try again.";
-    console.error("AJAX error:", error);
-    return false;
-  }
-}
-
-/**
- * Check form validation.
+ * check form validation.
  * 
  * @param {*} event 
  */
@@ -244,9 +192,8 @@ async function formValidate(event) {
   let imageValid = validateImageUpload();
   let marksValid = validateMarks();
   let phoneValid = validatePhoneNumber();
-  let emailValid = await validateEmail();
 
-  if (nameValid && imageValid && phoneValid && emailValid && marksValid) {
+  if (nameValid && imageValid && marksValid && phoneValid) {
     document.getElementById("form-data").submit();
   }
   else {
