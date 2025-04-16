@@ -196,8 +196,15 @@ async function validateEmail() {
   emailError.textContent = "";
   successMessage.textContent = "";
 
+  // Basic frontend validations
   if (!email) {
     emailError.textContent = "Email is required.";
+    return false;
+  }
+
+  // Email regex pattern
+  if (!emailPattern.test(email)) {
+    emailError.textContent = "Please enter a valid email format.";
     return false;
   }
 
