@@ -1,0 +1,36 @@
+nav a {
+  padding: 16px 35px;
+  background-color: #1b0503;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-family: sans-serif;
+  top: 2%;
+  position: absolute;
+  right: 11%;
+}
+
+.content-wrapper {
+  position: relative;
+}
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translateY(100%);
+}
+
+h2 {
+  text-align: center;
+  font-size: 4rem;
+}
+
+p {
+  text-align: center;
+}
+
+span {
+  display: block;
+}
+
